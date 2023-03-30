@@ -1,4 +1,42 @@
-import { Entity, Column, CreateDateColumn, PrimaryColumn } from "typeorm";
+import { Exclude } from "class-transformer";
+import { IsString, IsNotEmpty, IsBoolean } from "class-validator";
+import {
+  PrimaryGeneratedColumn,
+  Entity,
+  Column,
+  CreateDateColumn,
+  PrimaryColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from "typeorm";
 
 @Entity()
-export class User {}
+export class User {
+  @PrimaryGeneratedColumn()
+  @Exclude()
+  id: number;
+
+  @Column()
+  @IsNotEmpty()
+  @IsString()
+  email: string;
+
+  @Column()
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+
+  @Column()
+  @IsNotEmpty()
+  @IsBoolean()
+  is_driver: boolean;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
+}
