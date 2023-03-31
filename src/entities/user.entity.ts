@@ -26,7 +26,7 @@ export class User {
   @IsString()
   password: string;
 
-  @Column()
+  @Column("bool")
   @IsNotEmpty()
   @IsBoolean()
   is_driver: boolean;
