@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { config } from "dotenv";
 import { async } from "rxjs";
 import { DataSource, DataSourceOptions } from "typeorm";
-import { runSeeders, SeederOptions } from "typeorm-extension";
+// import { runSeeders, SeederOptions } from "typeorm-extension";
 
 export default new DataSource({
   type: "mariadb",

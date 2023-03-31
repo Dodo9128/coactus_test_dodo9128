@@ -5,6 +5,7 @@ import { NestModule, Module, ValidationPipe, MiddlewareConsumer } from "@nestjs/
 import { APP_PIPE } from "@nestjs/core";
 import { AppController } from "./app.controller";
 // import { AppService } from "./app.service";
+import { UserModule } from "./user/user.module";
 
 const node_env = process.env.NODE_ENV || "development";
 
@@ -38,6 +39,7 @@ console.log(`Environment Path is: ${envPath}`);
       load: [configuration],
     }),
     DatabaseModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
