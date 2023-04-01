@@ -8,7 +8,8 @@ import { AppController } from "./app.controller";
 import { UserModule } from "./user/user.module";
 import { UserController } from "./user/user.controller";
 import { LoggerMiddleware } from "./global/logger.middleware";
-import { ReservationModule } from './reservation/reservation.module';
+import { ReservationModule } from "./reservation/reservation.module";
+import { ReservationController } from "./reservation/reservation.controller";
 
 const node_env = process.env.NODE_ENV || "development";
 
@@ -57,5 +58,6 @@ console.log(`Environment Path is: ${envPath}`);
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes(UserController);
+    consumer.apply(LoggerMiddleware).forRoutes(ReservationController);
   }
 }
