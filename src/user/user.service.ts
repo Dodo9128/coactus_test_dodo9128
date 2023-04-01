@@ -21,10 +21,6 @@ export class UserService {
         email,
       };
     } catch (err) {
-      // return false;
-      // const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "verify", err);
-      // throw new HttpException(errorInfo, 200);
-      // throw new Error("Unauthorized");
       return false;
     }
   }
@@ -56,8 +52,14 @@ export class UserService {
         expiresIn: this.config.get("JWT_EXPIRES"),
       });
 
-      // making jwt token
-      return { token: jwtToken };
+      const userInfo = {
+        id: getUserByEmail.id,
+        email: getUserByEmail.email,
+        is_driver: getUserByEmail.is_driver,
+        created_at: getUserByEmail.created_at,
+      };
+
+      return { token: jwtToken, userInfo: userInfo };
     } catch (err) {
       console.log(err);
       const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "login", err);
@@ -67,7 +69,7 @@ export class UserService {
 
   async getUser(userId: number) {
     try {
-      const result = await this.userRepository.getUser(userId);
+      const result = await this.userRepository.getUserByIdWithoutPassword(userId);
 
       if (!result) {
         throw new Error("User not found");
@@ -80,20 +82,42 @@ export class UserService {
       throw new HttpException(errorInfo, 200);
     }
   }
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
 
-  findAll() {
-    return `This action returns all user`;
+  async getAllUser() {
+    try {
+      console.log("GETALLUSER");
+      const result = await this.userRepository.getAllUser();
+      return result;
+    } catch (err) {
+      const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "getAllUser", err);
+      throw new HttpException(errorInfo, 200);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      const prePassword = updateUserDto.prePassword;
+      const newPassword = updateUserDto.password;
+      const getUserById = await this.userRepository.getUserById(id);
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+      console.log("HERE1");
+
+      const validatePassword = await bcrypt.compare(prePassword, getUserById.password);
+      if (!getUserById || !validatePassword) {
+        // user가 없거나 password 에러
+        throw new Error("Unauthorized");
+      }
+
+      console.log("HERE");
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      const result = await this.userRepository.updateUser(id, hashedPassword);
+      return result;
+    } catch (err) {
+      const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "update", err);
+      throw new HttpException(errorInfo, 403);
+    }
   }
 
   remove(id: number) {

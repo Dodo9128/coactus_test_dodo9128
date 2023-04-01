@@ -16,18 +16,55 @@ export class UserRepository {
   async getUserByEmail(email: string) {
     return await this.dataSource
       .getRepository(User)
-      .createQueryBuilder("User")
+      .createQueryBuilder()
       .select("*")
       .where(`email = :email`, { email: email })
       .getRawOne();
   }
 
-  async getUser(userId: number) {
+  async getUserByEmailWithoutPassword(email: string) {
     return await this.dataSource
       .getRepository(User)
       .createQueryBuilder()
-      .select("id, email, is_driver")
+      .select("id, email, is_driver, created_at")
+      .where(`email = :email`, { email: email })
+      .getRawOne();
+  }
+
+  async getUserById(userId: number) {
+    return await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder()
+      .select("*")
       .where(`id = :id`, { id: userId })
       .getRawOne();
+  }
+
+  async getUserByIdWithoutPassword(userId: number) {
+    return await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder()
+      .select("id, email, is_driver, created_at")
+      .where(`id = :id`, { id: userId })
+      .getRawOne();
+  }
+
+  async getAllUser() {
+    return await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder()
+      .select(`id, email, is_driver, created_at`)
+      .getRawMany();
+  }
+
+  async updateUser(userId, password) {
+    return await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder()
+      .update<User>(User, { password: password })
+      .where(`id = :id`, { id: userId })
+      .returning(`id, email`)
+      .updateEntity(true)
+      .execute();
   }
 }

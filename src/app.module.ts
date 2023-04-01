@@ -8,6 +8,7 @@ import { AppController } from "./app.controller";
 import { UserModule } from "./user/user.module";
 import { UserController } from "./user/user.controller";
 import { LoggerMiddleware } from "./global/logger.middleware";
+import { ReservationModule } from './reservation/reservation.module';
 
 const node_env = process.env.NODE_ENV || "development";
 
@@ -42,6 +43,7 @@ console.log(`Environment Path is: ${envPath}`);
     }),
     DatabaseModule,
     UserModule,
+    ReservationModule,
   ],
   controllers: [AppController],
   providers: [
