@@ -43,19 +43,19 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
+  @Get("getAllUser")
+  async getAllUser(@Res() res: Response) {
+    const result = await this.userService.getAllUser();
+    return res.status(HttpStatus.OK).json(sendOk("get All Users", result));
+  }
+
+  @UseGuards(AuthGuard)
   @Get(":id")
   async getUser(@Param("id") id: string, @Res() res: Response) {
     const result = await this.userService.getUser(+id);
     return result
       ? res.status(HttpStatus.OK).json(sendOk(`email ${result.email} user info`, result))
       : res.status(HttpStatus.NOT_FOUND).json(sendFail("Something Wrong", null));
-  }
-
-  @UseGuards(AuthGuard)
-  @Get("getAllUser")
-  async getAllUser(@Res() res: Response) {
-    const result = await this.userService.getAllUser();
-    return res.status(HttpStatus.OK).json(sendOk("get All Users", result));
   }
 
   @UseGuards(AuthGuard)
