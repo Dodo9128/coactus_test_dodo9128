@@ -54,6 +54,28 @@ export class ReservationService {
     }
   }
 
+  async getReservationForCustomer(customerInfo) {
+    try {
+      const { email, is_driver } = customerInfo;
+
+      if (is_driver) {
+        throw new Error("Only Normal User can Get Reservation For Customer");
+      }
+
+      const customer = await this.userRepository.getUserByEmail(email);
+
+      const result = await this.reservationRepository.getReservationForCustomer(customer.id);
+
+      if (result) {
+        return sendOk(`${email} reservations`, result);
+      }
+      return sendFail(`${email} reservation inquire fail`, null);
+    } catch (err) {
+      const errorInfo = makeErrorInfoObjForHttpException(ReservationService.name, "getReservationForCustomer", err);
+      throw new HttpException(errorInfo, 403);
+    }
+  }
+
   findAll() {
     return `This action returns all reservation`;
   }

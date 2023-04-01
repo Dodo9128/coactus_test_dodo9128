@@ -17,23 +17,24 @@ export class ReservationController {
   }
 
   @UseGuards(AuthGuard)
-  @Get("user")
-  findAll() {
-    return this.reservationService.findAll();
+  @Get("customer/get_reservation")
+  async getReservationForCustomer(@Body() customerInfo, @Res() res: Response) {
+    const result = await this.reservationService.getReservationForCustomer(customerInfo);
+    return result.result ? res.status(HttpStatus.OK).json(result) : res.status(HttpStatus.BAD_REQUEST).json(result);
   }
 
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.reservationService.findOne(+id);
-  }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateReservationDto: UpdateReservationDto) {
-    return this.reservationService.update(+id, updateReservationDto);
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.reservationService.remove(+id);
-  }
+  // @Get(":id")
+  // findOne(@Param("id") id: string) {
+  //   return this.reservationService.findOne(+id);
+  // }
+  //
+  // @Patch(":id")
+  // update(@Param("id") id: string, @Body() updateReservationDto: UpdateReservationDto) {
+  //   return this.reservationService.update(+id, updateReservationDto);
+  // }
+  //
+  // @Delete(":id")
+  // remove(@Param("id") id: string) {
+  //   return this.reservationService.remove(+id);
+  // }
 }
