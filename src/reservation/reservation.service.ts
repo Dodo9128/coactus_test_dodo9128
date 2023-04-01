@@ -18,7 +18,7 @@ export class ReservationService {
 
   async makeReservation(createReservationDto): Promise<IResultReturn> {
     try {
-      const { id, email, is_driver, start_location, departure_location } = createReservationDto;
+      const { id, email, is_driver, start_location, departure_location, start_at } = createReservationDto;
 
       if (is_driver) {
         throw new Error("Only Normal User can make reservation");
@@ -40,6 +40,7 @@ export class ReservationService {
         price: price,
         reservation_status: "yet",
         customer: customer,
+        start_at: start_at,
       };
 
       const result = await this.reservationRepository.makeReservation(data);
