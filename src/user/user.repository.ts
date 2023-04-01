@@ -8,46 +8,26 @@ export class UserRepository {
   constructor(private readonly dataSource: DataSource) {}
 
   async join(createUserDto: CreateUserDto) {
-    // const result = await this.dataSource
-    //   .getRepository(User)
-    //   .createQueryBuilder()
-    //   .insert()
-    //   .values([
-    //     {
-    //       email: createUserDto.email,
-    //       password: createUserDto.password,
-    //       is_driver: createUserDto.is_driver,
-    //     },
-    //   ]);
-    // return result ? true : false;
-    // return await this.dataSource
-    //   .getRepository(User)
-    //   .createQueryBuilder()
-    //   .insert()
-    //   .values([
-    //     {
-    //       email: createUserDto.email,
-    //       password: createUserDto.password,
-    //       is_driver: createUserDto.is_driver,
-    //     },
-    //   ]);
-    // return await this.dataSource
-    //   .createQueryBuilder()
-    //   .insert()
-    //   .into(User)
-    //   .values([
-    //     {
-    //       email: createUserDto.email,
-    //       password: createUserDto.password,
-    //       is_driver: createUserDto.is_driver,
-    //     },
-    //   ]);
     const newUser = await this.dataSource.getRepository(User).create({ ...createUserDto });
     const saveUser = await this.dataSource.getRepository(User).save(newUser);
     return saveUser ? true : false;
   }
 
-  async getUser() {
-    return await this.dataSource.getRepository(User).createQueryBuilder().select("*").getRawMany();
+  async getUserByEmail(email: string) {
+    return await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder("User")
+      .select("*")
+      .where(`email = :email`, { email: email })
+      .getRawOne();
+  }
+
+  async getUser(userId: number) {
+    return await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder()
+      .select("id, email, is_driver")
+      .where(`id = :id`, { id: userId })
+      .getRawOne();
   }
 }

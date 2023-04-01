@@ -6,6 +6,8 @@ import { APP_PIPE } from "@nestjs/core";
 import { AppController } from "./app.controller";
 // import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
+import { UserController } from "./user/user.controller";
+import { LoggerMiddleware } from "./global/logger.middleware";
 
 const node_env = process.env.NODE_ENV || "development";
 
@@ -51,5 +53,7 @@ console.log(`Environment Path is: ${envPath}`);
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {}
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes(UserController);
+  }
 }
