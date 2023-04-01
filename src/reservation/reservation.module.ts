@@ -6,7 +6,6 @@ import { UserService } from "../user/user.service";
 import { UserRepository } from "../user/user.repository";
 
 @Module({
-  imports: [],
   controllers: [ReservationController],
   providers: [ReservationService, ReservationRepository, UserService, UserRepository],
 })

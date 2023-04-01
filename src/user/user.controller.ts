@@ -18,6 +18,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { sendOk, sendFail } from "../global/functionReturn";
 import { AuthGuard } from "../global/authguard";
+import { IUpdateUserInfo } from "../global/interface";
 
 @Controller("user")
 export class UserController {
@@ -60,10 +61,10 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Patch("update/:id")
-  async update(@Param("id") id: string, @Body() updateUserDto, @Res() res: Response) {
-    const result = await this.userService.update(+id, updateUserDto);
+  async update(@Param("id") id: string, @Body() updateInfo: IUpdateUserInfo, @Res() res: Response) {
+    const result = await this.userService.update(+id, updateInfo);
     if (result) {
-      return res.status(HttpStatus.OK).json(sendOk(`User info update done`, result));
+      return res.status(HttpStatus.OK).json(sendOk(`User info update done`, true));
     }
     return res.status(HttpStatus.BAD_REQUEST).json(sendFail(`User Info Update Fail`, null));
     // return this.userService.update(+id, updateUserDto);

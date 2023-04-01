@@ -7,6 +7,7 @@ import { UserRepository } from "./user.repository";
 import { ConfigService } from "@nestjs/config";
 import { User } from "../entities/user.entity";
 import { makeErrorInfoObjForHttpException } from "../global/globalErrorHandler";
+import { IUpdateUserInfo } from "../global/interface";
 
 @Injectable()
 export class UserService {
@@ -24,6 +25,7 @@ export class UserService {
       return false;
     }
   }
+
   async join(createUserDto: CreateUserDto) {
     // bcrypt hash & send true || false
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -61,7 +63,6 @@ export class UserService {
 
       return { token: jwtToken, userInfo: userInfo };
     } catch (err) {
-      console.log(err);
       const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "login", err);
       throw new HttpException(errorInfo, 200);
     }
@@ -93,10 +94,10 @@ export class UserService {
     }
   }
 
-  async update(id: number, updateUserDto) {
+  async update(id: number, updateInfo: IUpdateUserInfo) {
     try {
-      const prePassword = updateUserDto.prePassword;
-      const newPassword = updateUserDto.password;
+      const prePassword = updateInfo.prePassword;
+      const newPassword = updateInfo.password;
       const getUserById = await this.userRepository.getUserById(id);
 
       const validatePassword = await bcrypt.compare(prePassword, getUserById.password);

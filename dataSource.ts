@@ -5,19 +5,19 @@ import { async } from "rxjs";
 import { DataSource, DataSourceOptions } from "typeorm";
 // import { runSeeders, SeederOptions } from "typeorm-extension";
 
-// export default new DataSource({
-//   type: "mariadb",
-//   host: "localhost",
-//   port: 3306,
-//   username: "test",
-//   password: "testUser",
-//   database: "coacters_test",
-//   synchronize: false,
-//   entities: ["src/**/*.entity.ts"],
-//   //   entities: [__dirname + "src/entities/*.entity{.ts,.js}"],
-//   migrations: ["src/database/migrations/*.ts"],
-//   migrationsTableName: "migrations",
-// } as DataSourceOptions);
+export default new DataSource({
+  type: "mariadb",
+  host: "localhost",
+  port: 3306,
+  username: "test",
+  password: "testUser",
+  database: "coacters_test",
+  synchronize: false,
+  entities: ["src/**/*.entity.ts"],
+  //   entities: [__dirname + "src/entities/*.entity{.ts,.js}"],
+  migrations: ["src/database/migrations/*.ts"],
+  migrationsTableName: "migrations",
+} as DataSourceOptions);
 
 // async () => {
 //   const options: DataSourceOptions & SeederOptions = {
@@ -46,22 +46,22 @@ import { DataSource, DataSourceOptions } from "typeorm";
 //   });
 // };
 
-config();
-
-const configService = new ConfigService();
-
-export default new DataSource({
-  type: configService.get("DATABASE_TYPE") || "mariadb",
-  host: configService.get("DATABASE_HOST"),
-  port: configService.get<number>("DATABASE_PORT"),
-  username: configService.get("DATABASE_USERNAME"),
-  password: configService.get("DATABASE_PASSWORD"),
-  database: configService.get("DATABASE_NAME"),
-  synchronize: false,
-  entities: ["src/**/*.entity.ts"],
-  migrations: ["src/database/migrations/*.ts"],
-  migrationsTableName: "migrations",
-} as DataSourceOptions);
+// config();
+//
+// const configService = new ConfigService();
+//
+// export default new DataSource({
+//   type: configService.get("DATABASE_TYPE") || "mariadb",
+//   host: configService.get("DATABASE_HOST"),
+//   port: configService.get<number>("DATABASE_PORT"),
+//   username: configService.get("DATABASE_USERNAME"),
+//   password: configService.get("DATABASE_PASSWORD"),
+//   database: configService.get("DATABASE_NAME"),
+//   synchronize: false,
+//   entities: ["src/**/*.entity.ts"],
+//   migrations: ["src/database/migrations/*.ts"],
+//   migrationsTableName: "migrations",
+// } as DataSourceOptions);
 
 // console.log(process.env.DATABASE);
 

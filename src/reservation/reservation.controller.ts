@@ -1,4 +1,5 @@
-import { UseGuards, Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common";
+import { UseGuards, Controller, Req, Res, Get, Post, Body, Patch, Param, Delete, HttpStatus } from "@nestjs/common";
+import { Request, Response } from "express";
 import { ReservationService } from "./reservation.service";
 import { CreateReservationDto } from "./dto/create-reservation.dto";
 import { UpdateReservationDto } from "./dto/update-reservation.dto";
@@ -9,12 +10,14 @@ export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
   @UseGuards(AuthGuard)
-  @Post()
-  create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationService.create(createReservationDto);
+  @Post("make")
+  async makeReservation(@Body() createReservationDto: CreateReservationDto, @Res() res: Response) {
+    const result = await this.reservationService.makeReservation(createReservationDto);
+    return result.result ? res.status(HttpStatus.OK).json(result) : res.status(HttpStatus.BAD_REQUEST).json(result);
   }
 
-  @Get()
+  @UseGuards(AuthGuard)
+  @Get("user")
   findAll() {
     return this.reservationService.findAll();
   }
