@@ -63,8 +63,8 @@ export class UserRepository {
       .createQueryBuilder()
       .update<User>(User, { password: password })
       .where(`id = :id`, { id: userId })
-      .returning(`id, email`)
-      .updateEntity(true)
+      // .returning(`id, email`)
+      // .updateEntity(true)
       .execute();
   }
 }

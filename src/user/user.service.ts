@@ -85,7 +85,6 @@ export class UserService {
 
   async getAllUser() {
     try {
-      console.log("GETALLUSER");
       const result = await this.userRepository.getAllUser();
       return result;
     } catch (err) {
@@ -94,26 +93,24 @@ export class UserService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto) {
     try {
       const prePassword = updateUserDto.prePassword;
       const newPassword = updateUserDto.password;
       const getUserById = await this.userRepository.getUserById(id);
 
-      console.log("HERE1");
-
       const validatePassword = await bcrypt.compare(prePassword, getUserById.password);
-      if (!getUserById || !validatePassword) {
-        // user가 없거나 password 에러
+      if (!getUserById) {
         throw new Error("Unauthorized");
       }
-
-      console.log("HERE");
+      if (!validatePassword) {
+        throw new Error("Wrong Password");
+      }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       const result = await this.userRepository.updateUser(id, hashedPassword);
-      return result;
+      return true;
     } catch (err) {
       const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "update", err);
       throw new HttpException(errorInfo, 403);

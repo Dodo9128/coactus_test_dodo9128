@@ -18,6 +18,7 @@ export class AuthGuard implements CanActivate {
       const jwtString = request.headers.authorization.split("Bearer ")[1];
       const result = await this.userService.verify(jwtString);
 
+      console.log("AUTHGUARD RESULT :", result);
       if (!result) {
         console.log("VALIDATE EXCEPTION");
         throw new Error("JWT VALIDATE EXCEPTION");

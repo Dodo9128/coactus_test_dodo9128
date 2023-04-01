@@ -60,11 +60,12 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Patch("update/:id")
-  async update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
-    console.log("TOTOTO1");
+  async update(@Param("id") id: string, @Body() updateUserDto, @Res() res: Response) {
     const result = await this.userService.update(+id, updateUserDto);
-    console.log("TOTOTO2");
-    return res.status(HttpStatus.OK).json(sendOk(`User info update done`, result));
+    if (result) {
+      return res.status(HttpStatus.OK).json(sendOk(`User info update done`, result));
+    }
+    return res.status(HttpStatus.BAD_REQUEST).json(sendFail(`User Info Update Fail`, null));
     // return this.userService.update(+id, updateUserDto);
   }
 
