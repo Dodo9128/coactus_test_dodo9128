@@ -1,8 +1,8 @@
 {
-  "name": "coactus_backend",
+  "name": "coactus_backend_dodo9128",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "coacters test for Dodo9128",
+  "author": "dodo9128@github.com",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
