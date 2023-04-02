@@ -167,7 +167,7 @@ export class ReservationService {
       } else {
         // searchOption 존재
         // searchOption은 날짜, 지역 존재할 수 있음
-        const wholeReservation = await this.reservationRepository.getAllReservationForDriver(
+        let wholeReservation = await this.reservationRepository.getAllReservationForDriver(
           order_column,
           order_option,
           reservation_status,
@@ -175,9 +175,16 @@ export class ReservationService {
 
         // 검색조건 날짜
         if (search_option.kind_of_option === "date") {
-          wholeReservation.filter(reservation => {
-            reservation.start_at > search_option.option_values;
+          const searchDate = Date.parse(search_option.option_values);
+          const preReservation = [];
+          wholeReservation.forEach(reservation => {
+            const reservationDate = reservation.start_at.getTime();
+            if (reservationDate > searchDate) preReservation.push(reservation);
           });
+
+          // wholeReservation.filter(reservation => reservation.start_at.getTime() > searchDate);
+
+          wholeReservation = preReservation;
         } else {
           // 검색조건 거리순
           wholeReservation.forEach(reservation => {
