@@ -121,11 +121,11 @@ export class ReservationService {
        * 최소값부터 return (ASC)
        */
 
-      const order_column = order_by.order_column ? order_by.order_column : this.config.get("DEFAULT_ORDER_COLUMN");
+      const order_column = order_by?.order_column ? order_by.order_column : this.config.get("DEFAULT_ORDER_COLUMN");
 
-      const order_option = order_by.order_option ? order_by.order_option : this.config.get("DEFAULT_ORDER_OPTION");
+      const order_option = order_by?.order_option ? order_by.order_option : this.config.get("DEFAULT_ORDER_OPTION");
 
-      const distance_values = order_by.distance_values ? order_by.distance_values : undefined;
+      const distance_values = order_by?.distance_values ? order_by.distance_values : undefined;
       // search_option이 있을 때와 없을 때를 나눠야 한다
 
       let result;
