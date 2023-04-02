@@ -27,7 +27,7 @@ switch (env) {
     };
     break;
   default:
-    logDir = __dirname + "../../../logs";
+    logDir = __dirname + "../../../../logs";
 
     dailyOptions = (level: string) => {
       return {
