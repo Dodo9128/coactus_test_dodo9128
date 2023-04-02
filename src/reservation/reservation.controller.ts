@@ -28,26 +28,16 @@ export class ReservationController {
   // 드라이버의 예약 조회 (유저, 드라이버 상관없이 모두 조회)
   @UseGuards(AuthGuard)
   @Get("driver/get_all_reservation/")
-  async getAllReservationForDriver(
-    @Body() driverInfo,
-    @Res() res: Response,
-  ) {
+  async getAllReservationForDriver(@Body() driverInfo, @Res() res: Response) {
     const result = await this.reservationService.getAllReservationForDriver(driverInfo);
     return result.result ? res.status(HttpStatus.OK).json(result) : res.status(HttpStatus.BAD_REQUEST).json(result);
   }
 
-  // @Get(":id")
-  // findOne(@Param("id") id: string) {
-  //   return this.reservationService.findOne(+id);
-  // }
-  //
-  // @Patch(":id")
-  // update(@Param("id") id: string, @Body() updateReservationDto: UpdateReservationDto) {
-  //   return this.reservationService.update(+id, updateReservationDto);
-  // }
-  //
-  // @Delete(":id")
-  // remove(@Param("id") id: string) {
-  //   return this.reservationService.remove(+id);
-  // }
+  // 드라이버의 예약 선택 / 수락 / 완료 처리
+  @UseGuards(AuthGuard)
+  @Post("driver/accept_reservation")
+  async selectReservation(@Body() driverInfo, @Res() res: Response) {
+    const result = await this.reservationService.acceptReservation(driverInfo);
+    return result.result ? res.status(HttpStatus.OK).json(result) : res.status(HttpStatus.BAD_REQUEST).json(result);
+  }
 }

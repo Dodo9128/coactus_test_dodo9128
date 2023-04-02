@@ -40,4 +40,35 @@ export class ReservationRepository {
           .orderBy(order_column, order_option)
           .getRawMany();
   }
+
+  async getReservationFromId(reservation_id) {
+    return await this.dataSource
+      .getRepository(Reservation)
+      .createQueryBuilder()
+      .select("*")
+      .where(`id = :reservation_id`, { reservation_id: reservation_id })
+      .getRawOne();
+  }
+
+  async acceptReservation(reservation_id, select_status, driver) {
+    let result;
+    if (select_status !== "yet") {
+      // yet이 아닌 경우에는 여기서 다 처리 가능_ driver가 바뀔 일이 없음
+      result = await this.dataSource
+        .getRepository(Reservation)
+        .createQueryBuilder()
+        .update<Reservation>(Reservation, { reservation_status: select_status, driver: driver })
+        .where(`id = :reservation_id`, { reservation_id: reservation_id })
+        .execute();
+    } else {
+      // yet인 경우로 돌아갈 때에는 드라이버를 삭제해야 함
+      result = await this.dataSource
+        .getRepository(Reservation)
+        .createQueryBuilder()
+        .update<Reservation>(Reservation, { reservation_status: select_status, driver: null })
+        .where(`id = :reservation_id`, { reservation_id: reservation_id })
+        .execute();
+    }
+    return result;
+  }
 }

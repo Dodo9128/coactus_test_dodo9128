@@ -20,7 +20,11 @@ export class ReservationService {
     try {
       const { id, email, is_driver, start_location, departure_location, start_at } = createReservationDto;
 
-      if (is_driver) {
+      const customer = await this.userRepository.getUserByEmail(email);
+
+      const customer_is_driver = customer.is_driver;
+
+      if (is_driver || email !== customer.email || customer_is_driver) {
         throw new Error("Only Normal User can make reservation");
       }
 
@@ -30,8 +34,6 @@ export class ReservationService {
       const totalDistance: number = distance(start_location, departure_location);
 
       const price: number = Math.floor(totalDistance * this.config.get("PRICE_PER_KM"));
-
-      const customer = await this.userRepository.getUserByEmail(email);
 
       const data = {
         start_location: startLocationText,
@@ -215,19 +217,31 @@ export class ReservationService {
     }
   }
 
-  findAll() {
-    return `This action returns all reservation`;
-  }
+  // 드라이버의 select / 예약 수락 로직
+  // select on, off 받을 수 있어야 함
+  // reservation_status !== yet && reservation.driver_id === driver.id 일 때 confirm, done 처리 가능
+  async acceptReservation(driverInfo) {
+    const { email, is_driver, reservation_id, select_status } = driverInfo;
 
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
-  }
+    const driver = await this.userRepository.getUserByEmail(email);
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    return `This action updates a #${id} reservation`;
-  }
+    const driver_is_driver = driver.is_driver;
 
-  remove(id: number) {
-    return `This action removes a #${id} reservation`;
+    if (!is_driver || is_driver !== driver_is_driver) {
+      throw new Error("Only Driver can Get Reservation For Driver");
+    }
+
+    const current_reservation = await this.reservationRepository.getReservationFromId(reservation_id);
+
+    if (
+      current_reservation.reservation_status === "yet" ||
+      (current_reservation.reservation_status !== "yet" && current_reservation.driver_id === driver.id)
+    ) {
+      const result = await this.reservationRepository.acceptReservation(reservation_id, select_status, driver);
+
+      return sendOk("Reservation Select Change has Success", true);
+    } else {
+      throw new Error("This Reservation has already selected / comfirmed from other Driver");
+    }
   }
 }
