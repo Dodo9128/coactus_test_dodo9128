@@ -27,11 +27,21 @@ export class UserService {
   }
 
   async join(createUserDto: CreateUserDto) {
-    // bcrypt hash & send true || false
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    createUserDto.password = hashedPassword;
-    const result = await this.userRepository.join(createUserDto);
-    return result;
+    try {
+      const isValidUser = await this.userRepository.getUserByEmail(createUserDto.email);
+
+      if (isValidUser) {
+        throw new Error(`User ${createUserDto.email} has already joined`);
+      }
+      // bcrypt hash & send true || false
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+      createUserDto.password = hashedPassword;
+      const result = await this.userRepository.join(createUserDto);
+      return result;
+    } catch (err) {
+      const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "join", err);
+      throw new HttpException(errorInfo, 401);
+    }
   }
 
   async login(data) {
@@ -64,7 +74,7 @@ export class UserService {
       return { token: jwtToken, userInfo: userInfo };
     } catch (err) {
       const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "login", err);
-      throw new HttpException(errorInfo, 200);
+      throw new HttpException(errorInfo, 403);
     }
   }
 
@@ -80,7 +90,7 @@ export class UserService {
     } catch (err) {
       console.log(err);
       const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "getUser", err);
-      throw new HttpException(errorInfo, 200);
+      throw new HttpException(errorInfo, 404);
     }
   }
 
@@ -90,7 +100,7 @@ export class UserService {
       return result;
     } catch (err) {
       const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "getAllUser", err);
-      throw new HttpException(errorInfo, 200);
+      throw new HttpException(errorInfo, 403);
     }
   }
 
