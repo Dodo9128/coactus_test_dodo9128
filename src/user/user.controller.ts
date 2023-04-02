@@ -44,7 +44,7 @@ export class UserController {
   }
 
   @UseGuards(AuthGuard)
-  @Get("getAllUser")
+  @Get("get_all_user")
   async getAllUser(@Res() res: Response) {
     const result = await this.userService.getAllUser();
     return res.status(HttpStatus.OK).json(sendOk("get All Users", result));

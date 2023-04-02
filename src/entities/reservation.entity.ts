@@ -39,12 +39,12 @@ export class Reservation {
   @IsNotEmpty()
   price: number;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn({ name: "customer_id" })
   @IsNotEmpty()
   customer: User;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn({ name: "driver_id" })
   driver: User;
 

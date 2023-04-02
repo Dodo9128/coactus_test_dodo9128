@@ -220,6 +220,7 @@ export class ReservationService {
   // 드라이버의 select / 예약 수락 로직
   // select on, off 받을 수 있어야 함
   // reservation_status !== yet && reservation.driver_id === driver.id 일 때 confirm, done 처리 가능
+  // confirm & done 일 때, driver가 일방적 취소 불가
   async acceptReservation(driverInfo) {
     const { email, is_driver, reservation_id, select_status } = driverInfo;
 
