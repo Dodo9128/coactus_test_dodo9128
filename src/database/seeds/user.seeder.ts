@@ -12,12 +12,11 @@ import { User } from "../../entities/user.entity";
 export default class UserSeeder implements Seeder {
   //   constructor(private dataSource: DataSource) {}
   public async run(dataSource: DataSource): Promise<any> {
-    const userRepository = dataSource.getRepository(User);
-    await userRepository.insert([
-      { id: 1, email: "guest@guest.com", password: "password", is_driver: false },
-      { id: 2, email: "guest2@guest2.com", password: "password2", is_driver: true },
-    ]);
-
+    // const userRepository = dataSource.getRepository(User);
+    // await userRepository.insert([
+    //   { id: 1, email: "guest@guest.com", password: "password", is_driver: false },
+    //   { id: 2, email: "guest2@guest2.com", password: "password2", is_driver: true },
+    // ]);
     // const reservationRepository = dataSource.getRepository(Reservation);
     // await reservationRepository
     //   .createQueryBuilder()
@@ -42,7 +41,6 @@ export default class UserSeeder implements Seeder {
     //     { id: 2, email: "guest2@guest2.com", password: "password2", is_driver: true },
     //   ])
     //   .execute();
-
     // await this.dataSource
     //   .createQueryBuilder()
     //   .insert()

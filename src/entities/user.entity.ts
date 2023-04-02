@@ -8,7 +8,10 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
+  JoinColumn,
 } from "typeorm";
+import { Reservation } from "./reservation.entity";
 
 @Entity()
 export class User {
@@ -16,20 +19,28 @@ export class User {
   @Exclude()
   id: number;
 
-  @Column()
+  @Column({ unique: true, nullable: false })
   @IsNotEmpty()
   @IsString()
   email: string;
 
-  @Column()
+  @Column({ nullable: false })
   @IsNotEmpty()
   @IsString()
   password: string;
 
-  @Column()
+  @Column("bool")
   @IsNotEmpty()
   @IsBoolean()
   is_driver: boolean;
+  //
+  // @OneToMany(type => Reservation, reservation => reservation.customer)
+  // @JoinColumn()
+  // customer_reservation: Reservation[];
+  //
+  // @OneToMany(type => Reservation, reservation => reservation.driver)
+  // @JoinColumn()
+  // driver_reservation: Reservation[];
 
   @CreateDateColumn()
   created_at: Date;

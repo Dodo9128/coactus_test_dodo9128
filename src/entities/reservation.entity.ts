@@ -9,6 +9,7 @@ import {
   OneToOne,
   JoinColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from "typeorm";
 import { User } from "./user.entity";
 
@@ -38,14 +39,14 @@ export class Reservation {
   @IsNotEmpty()
   price: number;
 
-  @OneToOne(type => User)
-  @JoinColumn()
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "customer_id" })
   @IsNotEmpty()
-  user: number;
+  customer: User;
 
-  @OneToOne(type => User)
-  @JoinColumn()
-  driver: number;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "driver_id" })
+  driver: User;
 
   @Column({ type: "enum", name: "reservation_status", enum: ["yet", "selected", "confirm", "done"] })
   @IsString()

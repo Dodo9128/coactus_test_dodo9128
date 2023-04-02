@@ -5,6 +5,11 @@ import { NestModule, Module, ValidationPipe, MiddlewareConsumer } from "@nestjs/
 import { APP_PIPE } from "@nestjs/core";
 import { AppController } from "./app.controller";
 // import { AppService } from "./app.service";
+import { UserModule } from "./user/user.module";
+import { UserController } from "./user/user.controller";
+import { LoggerMiddleware } from "./global/logger.middleware";
+import { ReservationModule } from "./reservation/reservation.module";
+import { ReservationController } from "./reservation/reservation.controller";
 
 const node_env = process.env.NODE_ENV || "development";
 
@@ -38,6 +43,8 @@ console.log(`Environment Path is: ${envPath}`);
       load: [configuration],
     }),
     DatabaseModule,
+    UserModule,
+    ReservationModule,
   ],
   controllers: [AppController],
   providers: [
@@ -49,5 +56,8 @@ console.log(`Environment Path is: ${envPath}`);
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {}
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes(UserController);
+    consumer.apply(LoggerMiddleware).forRoutes(ReservationController);
+  }
 }

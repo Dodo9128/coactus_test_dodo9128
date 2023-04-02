@@ -1,6 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
+import {HttpExceptionFilter} from "./global/globalErrorHandler";
 
 async function bootstrap() {
   const startTime = process.hrtime();
@@ -14,6 +15,8 @@ async function bootstrap() {
       stopAtFirstError: true,
     }),
   );
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const serverStart = await app.listen(process.env.SERVER_PORT);
   if (serverStart) {

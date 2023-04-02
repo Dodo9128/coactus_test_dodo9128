@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { config } from "dotenv";
 import { async } from "rxjs";
 import { DataSource, DataSourceOptions } from "typeorm";
-import { runSeeders, SeederOptions } from "typeorm-extension";
+// import { runSeeders, SeederOptions } from "typeorm-extension";
 
 export default new DataSource({
   type: "mariadb",
@@ -33,13 +33,13 @@ export default new DataSource({
 //     migrations: ["src/database/migrations/*.ts"],
 //     migrationsTableName: "migrations",
 //   };
-
+//
 //   const dataSource = new DataSource(options);
-
+//
 //   await dataSource.initialize();
-
+//
 //   console.log(dataSource);
-
+//
 //   runSeeders(dataSource, {
 //     seeds: ["src/database/seeds/**/*{.ts,.js}"],
 //     factories: ["src/database/factories/**/*{.ts,.js}"],
@@ -47,11 +47,11 @@ export default new DataSource({
 // };
 
 // config();
-
+//
 // const configService = new ConfigService();
-
+//
 // export default new DataSource({
-//   type: "mariadb",
+//   type: configService.get("DATABASE_TYPE") || "mariadb",
 //   host: configService.get("DATABASE_HOST"),
 //   port: configService.get<number>("DATABASE_PORT"),
 //   username: configService.get("DATABASE_USERNAME"),
@@ -61,7 +61,7 @@ export default new DataSource({
 //   entities: ["src/**/*.entity.ts"],
 //   migrations: ["src/database/migrations/*.ts"],
 //   migrationsTableName: "migrations",
-// } as DataSourceOptions).initialize();
+// } as DataSourceOptions);
 
 // console.log(process.env.DATABASE);
 
