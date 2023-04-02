@@ -235,13 +235,14 @@ export class ReservationService {
 
     if (
       current_reservation.reservation_status === "yet" ||
-      (current_reservation.reservation_status !== "yet" && current_reservation.driver_id === driver.id)
+      (current_reservation.reservation_status !== "yet" && current_reservation.driver_id === driver.id) ||
+      ["confirm", "done"].indexOf(current_reservation.reservation_status) === -1
     ) {
       const result = await this.reservationRepository.acceptReservation(reservation_id, select_status, driver);
 
       return sendOk("Reservation Select Change has Success", true);
     } else {
-      throw new Error("This Reservation has already selected / comfirmed from other Driver");
+      throw new Error("This Reservation has already selected / comfirmed");
     }
   }
 }
