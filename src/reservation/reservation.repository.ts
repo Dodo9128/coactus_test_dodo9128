@@ -22,14 +22,22 @@ export class ReservationRepository {
       .getRawMany();
   }
 
-  async getAllReservationForDriver(order_column, order_option) {
+  async getAllReservationForDriver(order_column, order_option, reservation_status) {
     // 가격순이면 내림차순으로 리턴
     if (order_column === "price") order_option = "DESC";
-    return await this.dataSource
-      .getRepository(Reservation)
-      .createQueryBuilder()
-      .select("*")
-      .orderBy(order_column, order_option)
-      .getRawMany();
+    return reservation_status
+      ? await this.dataSource
+          .getRepository(Reservation)
+          .createQueryBuilder()
+          .select("*")
+          .where("reservation_status = :reservation_status", { reservation_status: reservation_status })
+          .orderBy(order_column, order_option)
+          .getRawMany()
+      : await this.dataSource
+          .getRepository(Reservation)
+          .createQueryBuilder()
+          .select("*")
+          .orderBy(order_column, order_option)
+          .getRawMany();
   }
 }

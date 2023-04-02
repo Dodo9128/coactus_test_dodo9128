@@ -81,7 +81,7 @@ export class ReservationService {
   // 드라이버 상관없이 현재 등록된 모든 예약 조회
   async getAllReservationForDriver(driverInfo) {
     try {
-      const { email, is_driver, order_by, search_option } = driverInfo;
+      const { email, is_driver, order_by, search_option, reservation_status } = driverInfo;
 
       const driver = await this.userRepository.getUserByEmail(email);
 
@@ -133,12 +133,17 @@ export class ReservationService {
       if (!search_option) {
         // distance_values 있고 없을 때 나눠야 함 (order 조건이 distance 일 경우 계산해야 함)
         if (!distance_values) {
-          result = await this.reservationRepository.getAllReservationForDriver(order_column, order_option);
+          result = await this.reservationRepository.getAllReservationForDriver(
+            order_column,
+            order_option,
+            reservation_status,
+          );
         } else {
           // 드라이버와 고객간 거리순 정렬
           const wholeReservation = await this.reservationRepository.getAllReservationForDriver(
             order_column,
             order_option,
+            reservation_status,
           );
           // 일단 꺼내 왔음
           // distance_values의 좌표와 전체 예약의 start_좌표의 차이를 계산해야 함
@@ -165,6 +170,7 @@ export class ReservationService {
         const wholeReservation = await this.reservationRepository.getAllReservationForDriver(
           order_column,
           order_option,
+          reservation_status,
         );
 
         // 검색조건 날짜
