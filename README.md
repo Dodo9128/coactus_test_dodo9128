@@ -2,6 +2,8 @@
 
 dodo9128(이재윤)
 
+테스트용 구축 서버 : http://3.39.21.187
+
 ## Installation
 
 ```bash
