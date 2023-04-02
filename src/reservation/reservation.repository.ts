@@ -21,4 +21,15 @@ export class ReservationRepository {
       .where(`customer_id = :id`, { id: id })
       .getRawMany();
   }
+
+  async getAllReservationForDriver(order_column, order_option) {
+    // 가격순이면 내림차순으로 리턴
+    if (order_column === "price") order_option = "DESC";
+    return await this.dataSource
+      .getRepository(Reservation)
+      .createQueryBuilder()
+      .select("*")
+      .orderBy(order_column, order_option)
+      .getRawMany();
+  }
 }

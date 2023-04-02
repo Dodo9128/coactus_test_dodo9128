@@ -58,11 +58,13 @@ export class ReservationService {
     try {
       const { email, is_driver } = customerInfo;
 
-      if (is_driver) {
+      const customer = await this.userRepository.getUserByEmail(email);
+
+      const customer_is_driver = customer.is_driver;
+
+      if (is_driver || is_driver !== customer_is_driver) {
         throw new Error("Only Normal User can Get Reservation For Customer");
       }
-
-      const customer = await this.userRepository.getUserByEmail(email);
 
       const result = await this.reservationRepository.getReservationForCustomer(customer.id);
 
@@ -72,6 +74,130 @@ export class ReservationService {
       return sendFail(`${email} reservation inquire fail`, null);
     } catch (err) {
       const errorInfo = makeErrorInfoObjForHttpException(ReservationService.name, "getReservationForCustomer", err);
+      throw new HttpException(errorInfo, 403);
+    }
+  }
+
+  // 드라이버 상관없이 현재 등록된 모든 예약 조회
+  async getAllReservationForDriver(driverInfo) {
+    try {
+      const { email, is_driver, order_by, search_option } = driverInfo;
+
+      const driver = await this.userRepository.getUserByEmail(email);
+
+      const driver_is_driver = driver.is_driver;
+
+      if (!is_driver || is_driver !== driver_is_driver) {
+        throw new Error("Only Driver can Get Reservation For Driver");
+      }
+
+      // order_by의 값에 따른 정렬 옵션 체인지
+      /**
+       * order_by = {
+       *     order_column: "start_at" | "price" | "distance",
+       *     order_option: ASC
+       *     distance_values?: {
+       *         latitude: "24.038485",
+       *         longitude: "23.984209"
+       *     }
+       * }
+       *
+       * price 일때는 최대값부터 return (DESC)
+       * distance 일때는 reservation의 start 좌표값과 입력받은 좌표값의 거리를 계산해
+       * 최소값부터 return (ASC)
+       */
+
+      /**
+       * search_option = {
+       *     kind_of_option: "date" | "distance"
+       *     option_values: "2023-04-02 12:00:00" || {
+       *         latitude: "24.038485",
+       *         longitude: "23.984209"
+       *     }
+       * }
+       *
+       * 날짜일 땐 입력받은 날짜 이후의 값들만 골라오고 (ASC)
+       * distance 일때는 reservation의 start 좌표값과 입력받은 좌표값의 거리를 계산해
+       * 최소값부터 return (ASC)
+       */
+
+      const order_column = order_by.order_column ? order_by.order_column : this.config.get("DEFAULT_ORDER_COLUMN");
+
+      const order_option = order_by.order_option ? order_by.order_option : this.config.get("DEFAULT_ORDER_OPTION");
+
+      const distance_values = order_by.distance_values ? order_by.distance_values : undefined;
+      // search_option이 있을 때와 없을 때를 나눠야 한다
+
+      let result;
+
+      if (!search_option) {
+        // distance_values 있고 없을 때 나눠야 함 (order 조건이 distance 일 경우 계산해야 함)
+        if (!distance_values) {
+          result = await this.reservationRepository.getAllReservationForDriver(order_column, order_option);
+        } else {
+          // 드라이버와 고객간 거리순 정렬
+          const wholeReservation = await this.reservationRepository.getAllReservationForDriver(
+            order_column,
+            order_option,
+          );
+          // 일단 꺼내 왔음
+          // distance_values의 좌표와 전체 예약의 start_좌표의 차이를 계산해야 함
+
+          wholeReservation.forEach(reservation => {
+            const start_location = {
+              latitude: Number(reservation.start_location.split("/")[0]),
+              longitude: Number(reservation.start_location.split("/")[1]),
+            };
+            reservation["customer_location_distance"] = distance(start_location, distance_values);
+          });
+
+          // 드라이버 - 선택지역 거리순 오름차순 정렬
+          wholeReservation.sort((prev, next) => {
+            if (prev.customer_location_distance > next.customer_location_distance) return 1;
+            if (prev.customer_location_distance < next.customer_location_distance) return -1;
+          });
+
+          result = wholeReservation;
+        }
+      } else {
+        // searchOption 존재
+        // searchOption은 날짜, 지역 존재할 수 있음
+        const wholeReservation = await this.reservationRepository.getAllReservationForDriver(
+          order_column,
+          order_option,
+        );
+
+        // 검색조건 날짜
+        if (search_option.kind_of_option === "date") {
+          wholeReservation.filter(reservation => {
+            reservation.start_at > search_option.option_values;
+          });
+        } else {
+          // 검색조건 거리순
+          wholeReservation.forEach(reservation => {
+            const start_location = {
+              latitude: Number(reservation.start_location.split("/")[0]),
+              longitude: Number(reservation.start_location.split("/")[1]),
+            };
+            reservation["customer_driver_distance"] = distance(start_location, search_option.option_values);
+          });
+
+          // 드라이버 - 고객 거리순 오름차순 정렬
+          wholeReservation.sort((prev, next) => {
+            if (prev.customer_driver_distance > next.customer_driver_distance) return 1;
+            if (prev.customer_driver_distance < next.customer_driver_distance) return -1;
+          });
+        }
+
+        result = wholeReservation;
+      }
+
+      if (result) {
+        return sendOk(`All reservations`, result);
+      }
+      return sendFail(`All reservation inquire fail`, null);
+    } catch (err) {
+      const errorInfo = makeErrorInfoObjForHttpException(ReservationService.name, "getReservationForDriver", err);
       throw new HttpException(errorInfo, 403);
     }
   }
