@@ -1,6 +1,10 @@
 create database coacters_test;
+create database coacters_test_fortest;
 create user 'test'@'localhost' identified by 'testUser';
 GRANT ALL PRIVILEGES ON *.* TO 'test'@'localhost' IDENTIFIED BY 'testUser';
+GRANT ALL PRIVILEGES ON coacter_test.* TO 'test'@'localhost';
+GRANT ALL PRIVILEGES ON coacters_test_fortest.* TO 'test'@'localhost';
+
 flush privileges;
 
 #INSERT INTO user ('id', 'email', 'password', 'is_driver') VALUES (1, 'guest@guest.com', 'password', false)
