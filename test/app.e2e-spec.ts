@@ -92,6 +92,87 @@ describe("AppController (e2e)", () => {
     expect(response3.body.data).toEqual(null);
   });
 
+  const token = {};
+
+  it("/user/login (POST)_USER LOGIN", async () => {
+    const user1Data = {
+      email: "testuser1@test.io",
+      password: "testuser1",
+    };
+
+    const user2Data = {
+      email: "driveruser1@driver.io",
+      password: "driveruser1",
+    };
+
+    const user1WrongPw = {
+      email: "testuser1@test.io",
+      password: "wrongpassword",
+    };
+
+    const noExistUser = {
+      email: "nouser@nouser.io",
+      password: "password",
+    };
+
+    // 존재하지 않는 유저
+    // 로그인 실패
+    // 로그인
+
+    const noExistRequest = await request(app.getHttpServer())
+      .post("/user/login")
+      .set("Accept", "application/json")
+      .type("application/json")
+      .send(noExistUser);
+
+    expect(noExistRequest.statusCode).toEqual(403);
+
+    expect(JSON.parse(noExistRequest.text).name).toEqual("login");
+    expect(JSON.parse(noExistRequest.text).error).not.toBeNull();
+
+    const wrongPwRequest = await request(app.getHttpServer())
+      .post("/user/login")
+      .set("Accept", "application/json")
+      .type("application/json")
+      .send(user1WrongPw);
+
+    expect(wrongPwRequest.statusCode).toEqual(400);
+
+    expect(JSON.parse(wrongPwRequest.text).result).toEqual("fail");
+    expect(JSON.parse(wrongPwRequest.text).message).toEqual(`${user1WrongPw.email} login fail`);
+    expect(JSON.parse(wrongPwRequest.text).data).toBeNull();
+
+    const user1Login = await request(app.getHttpServer())
+      .post("/user/login")
+      .set("Accept", "application/json")
+      .type("application/json")
+      .send(user1Data);
+
+    expect(user1Login.statusCode).toEqual(200);
+    expect(user1Login.body.result).toEqual("ok");
+    expect(user1Login.body.message).toEqual(`${user1Data.email} login success`);
+    expect(user1Login.body.data).not.toBeNull();
+    expect(user1Login.body.data.userInfo.email).toEqual(user1Data.email);
+
+    token["customer"] = user1Login.body.data.token;
+
+    const user2Login = await request(app.getHttpServer())
+      .post("/user/login")
+      .set("Accept", "application/json")
+      .type("application/json")
+      .send(user2Data);
+
+    expect(user2Login.statusCode).toEqual(200);
+    expect(user2Login.body.result).toEqual("ok");
+    expect(user2Login.body.message).toEqual(`${user2Data.email} login success`);
+    expect(user2Login.body.data).not.toBeNull();
+    expect(user2Login.body.data.userInfo.email).toEqual(user2Data.email);
+
+    token["driver"] = user2Login.body.data.token;
+
+    console.log("MAKING TOKEN :", token);
+  });
+
   it("/user/hard_delete (DELETE)_user hard delete", async () => {
     const user1Email = "testuser1@test.io";
 
