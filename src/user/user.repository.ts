@@ -67,4 +67,13 @@ export class UserRepository {
       // .updateEntity(true)
       .execute();
   }
+
+  async hardDeleteByEmail(email) {
+    return await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder()
+      .delete()
+      .where(`email = :email`, { email: email })
+      .execute();
+  }
 }

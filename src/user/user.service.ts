@@ -128,7 +128,19 @@ export class UserService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async hardDelete(data) {
+    try {
+      const { email } = data;
+
+      const hardDeleteUser = await this.userRepository.hardDeleteByEmail(email);
+      if (hardDeleteUser) {
+        return true;
+      }
+      return false;
+      // return `This action removes a #${id} user`;
+    } catch (err) {
+      const errorInfo = makeErrorInfoObjForHttpException(UserService.name, "hardDelete", err);
+      throw new HttpException(errorInfo, 403);
+    }
   }
 }

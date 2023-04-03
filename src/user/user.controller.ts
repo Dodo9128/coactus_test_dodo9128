@@ -70,8 +70,13 @@ export class UserController {
     // return this.userService.update(+id, updateUserDto);
   }
 
-  @Delete("/:id")
-  remove(@Param("id") id: string) {
-    return this.userService.remove(+id);
+  @Delete("/hard_delete")
+  async hardDelete(@Body() data, @Res() res: Response) {
+    const result = await this.userService.hardDelete(data);
+    if (result) {
+      return res.status(HttpStatus.OK).json(sendOk(`User ${data.email} hard delete success`, null));
+    }
+    // return this.userService.remove(+id);
+    return res.status(HttpStatus.BAD_REQUEST).json(sendFail(`User ${data.email} hard delete fail`, null));
   }
 }
