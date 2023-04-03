@@ -40,6 +40,8 @@ describe("AppController (e2e)", () => {
 
     const response = await request(app.getHttpServer())
       .post("/user/join")
+      .set("Accept", "application/json")
+      .type("application/json")
       .send({ email: user1Email, password: user1Password, is_driver: user1IsDriver });
 
     expect(response.statusCode).toEqual(200);
@@ -49,6 +51,8 @@ describe("AppController (e2e)", () => {
 
     const response2 = await request(app.getHttpServer())
       .post("/user/join")
+      .set("Accept", "application/json")
+      .type("application/json")
       .send({ email: user1Email, password: user1Password, is_driver: user1IsDriver });
 
     expect(response2.statusCode).toEqual(401);
@@ -58,6 +62,8 @@ describe("AppController (e2e)", () => {
 
     const response3 = await request(app.getHttpServer())
       .post("/user/join")
+      .set("Accept", "application/json")
+      .type("application/json")
       .send({ email: user2Email, password: user2Password, is_driver: user2IsDriver });
 
     expect(response3.statusCode).toEqual(200);
